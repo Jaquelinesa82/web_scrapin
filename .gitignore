@@ -5,8 +5,9 @@ __pycache__/
 
 
 # dados extraídos
-data/*.json
 data/*.html
+data/*.json
+data/*.jsonl
 
 # C extensions
 *.so

@@ -1,6 +1,7 @@
 from crawler import ProcessCrawler
 from parser import process_identification
 import logging
+from storage import save_jsonl
 
 logging.basicConfig(
     level=logging.INFO,
@@ -12,11 +13,12 @@ def main():
     crawler = ProcessCrawler()
     process_number = "0000881-39.2016.4.05.0000"
 
-    logging.info(f"Searching process: {process_number}")
-
     html = crawler.search_process(process_number)
 
     process_data = process_identification(html)
+    save_jsonl(process_data)
+
+    logging.info("Dados processados com sucesso.")
 
     logging.info(f"Encontrada {len(process_data['envolvidos'])} partes envolvidas.")
 

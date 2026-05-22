@@ -41,4 +41,40 @@ def process_identification(html: str) -> str:
         "numero_legado": numero_legado,
         "data_autuacao": data_autuacao,
         "relator": relator,
+        "envolvidos": involved_parties(soup),
     }
+
+
+def involved_parties(soup=BeautifulSoup) -> list[dict]:
+    envolvidos = []
+
+    for table in soup.find_all("table"):
+        rows = table.find_all("tr")
+
+        for row in rows:
+            columns = row.find_all("td")
+
+            if len(columns) != 2:
+                continue
+
+            papel = clean_text(columns[0].get_text(" "))
+            nome = clean_text(columns[1].get_text(" ")).replace(":", "").strip()
+
+            if not papel or not nome:
+                continue
+
+            if papel in ["FASE ATUAL", "COMPLEMENTO", "ÚLTIMA LOCALIZAÇÃO"]:
+                continue
+
+            if papel == "RELATOR":
+                continue
+
+            if columns[1].find("b"):
+                envolvidos.append(
+                    {
+                        "papel": papel,
+                        "nome": nome,
+                    }
+                )
+
+    return envolvidos

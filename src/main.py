@@ -18,7 +18,9 @@ def main():
 
     process_data = process_identification(html)
 
-    logging.info(process_data)
+    logging.info(f"Encontrada {len(process_data['envolvidos'])} partes envolvidas.")
+
+    logging.info(f"Encontrado {len(process_data['movimentacoes'])} movimentos.")
 
     with open("data/process_response.html", "w", encoding="utf-8") as file:
         file.write(html)

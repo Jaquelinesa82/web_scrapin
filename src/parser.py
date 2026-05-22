@@ -42,6 +42,7 @@ def process_identification(html: str) -> str:
         "data_autuacao": data_autuacao,
         "relator": relator,
         "envolvidos": involved_parties(soup),
+        "movimentacoes": parse_movements(soup),
     }
 
 
@@ -78,3 +79,43 @@ def involved_parties(soup=BeautifulSoup) -> list[dict]:
                 )
 
     return envolvidos
+
+
+def parse_movements(soup: BeautifulSoup) -> list[dict]:
+    movimentacoes = []
+
+    movement_links = soup.find_all(
+        "a",
+        attrs={"name": lambda value: value and value.startswith("mov_")},
+    )
+
+    for link in movement_links:
+        data = clean_text(link.get_text(" ")).replace("Em ", "")
+
+        table = link.find_parent("table")
+
+        if not table:
+            continue
+
+        rows = table.find_all("tr")
+        textos = []
+
+        for row in rows[1:]:
+            columns = row.find_all("td")
+
+            if len(columns) < 2:
+                continue
+
+            texto = clean_text(columns[-1].get_text(" "))
+
+            if texto:
+                textos.append(texto)
+
+        movimentacoes.append(
+            {
+                "data": data,
+                "texto": " ".join(textos),
+            }
+        )
+
+    return movimentacoes

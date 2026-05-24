@@ -1,4 +1,9 @@
 from bs4 import BeautifulSoup
+import re
+
+
+def only_digits(value: str) -> str:
+    return re.sub(r"\D", "", value)
 
 
 def clean_text(value: str | None) -> str:

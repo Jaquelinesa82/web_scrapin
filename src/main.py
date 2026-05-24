@@ -20,6 +20,7 @@ PROCESS_NUMBERS = [
 ]
 
 PROCESS_CNPJ = "34.020.354/0001-10"
+MAX_CNPJ_PAGES = 2
 
 
 def search_number(
@@ -61,7 +62,7 @@ def search_number(
             len(process_data["movimentacoes"]),
         )
 
-    logging.info("Busca por número de processo finalizada..")
+    logging.info("Busca por número de processo finalizada.")
 
 
 def search_cnpj(
@@ -69,58 +70,63 @@ def search_cnpj(
     cnpj: str,
     processed_numbers: set[str],
 ) -> None:
-    logging.info(
-        "Buscando processos por CNPJ: %s",
-        cnpj,
-    )
 
-    html = crawler.search_process_cnpj(cnpj)
-
-    process_numbers = process_list(html)
-
-    logging.info(
-        "Foram encontrados %s processos na primeira página.",
-        len(process_numbers),
-    )
-
-    for process_number in process_numbers:
+    for page in range(MAX_CNPJ_PAGES):
         logging.info(
-            "Buscando detalhes do processo: %s",
-            process_number,
+            "Buscando processos por CNPJ: %s na página %s",
+            cnpj,
+            page,
         )
 
-        process_html = crawler.search_process_number(
-            process_number,
+        process_html = crawler.search_process_cnpj_page(cnpj, page)
+        process_numbers = process_list(process_html)
+
+        if not process_numbers:
+            logging.info("Nenhum processo encontrado na página %s.", page)
+            break
+
+        logging.info(
+            "Foram encontrados %s processos na página %s.", len(process_numbers), page
         )
 
-        process_data = process_identification(
-            process_html,
-        )
-
-        if process_data["numero_processo"] in processed_numbers:
+        for process_number in process_numbers:
             logging.info(
-                "Processo %s já processado. Ignorando.",
+                "Buscando detalhes do processo: %s",
+                process_number,
+            )
+
+            process_html = crawler.search_process_number(
+                process_number,
+            )
+
+            process_data = process_identification(
+                process_html,
+            )
+
+            if process_data["numero_processo"] in processed_numbers:
+                logging.info(
+                    "Processo %s já processado. Ignorando.",
+                    process_data["numero_processo"],
+                )
+                continue
+
+            processed_numbers.add(
                 process_data["numero_processo"],
             )
-            continue
 
-        processed_numbers.add(
-            process_data["numero_processo"],
-        )
+            process_data["origem_busca"] = "cnpj"
+            process_data["termo_busca"] = cnpj
 
-        process_data["origem_busca"] = "cnpj"
-        process_data["termo_busca"] = cnpj
+            save_jsonl(process_data)
 
-        save_jsonl(process_data)
+            logging.info(
+                "Processo %s salvo com %s partes envolvidas e %s movimentações.",
+                process_data["numero_processo"],
+                len(process_data["envolvidos"]),
+                len(process_data["movimentacoes"]),
+            )
 
-        logging.info(
-            "Processo %s salvo com %s partes envolvidas e %s movimentações.",
-            process_data["numero_processo"],
-            len(process_data["envolvidos"]),
-            len(process_data["movimentacoes"]),
-        )
-
-    logging.info("Busca por CNPJ finalizada.")
+        logging.info("Busca por CNPJ finalizada.")
 
 
 def main() -> None:

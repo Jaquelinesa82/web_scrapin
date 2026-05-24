@@ -14,7 +14,7 @@ Os dados extraídos são persistidos em arquivo JSON Lines (`.jsonl`).
 
 # Tecnologias utilizadas
 
-- Python 3.9.11
+- Python 3.11.9
 - requests
 - BeautifulSoup4
 

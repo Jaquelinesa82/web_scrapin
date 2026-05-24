@@ -20,6 +20,9 @@ PROCESS_NUMBERS = [
 ]
 
 PROCESS_CNPJ = "34.020.354/0001-10"
+
+PARTY_NAME = "CAIXA SEGURADORA SA"
+
 MAX_CNPJ_PAGES = 2
 
 
@@ -34,6 +37,9 @@ def search_number(
         process_html = crawler.search_process_number(
             process_number,
         )
+
+        if not process_html:
+            break
 
         process_data = process_identification(
             process_html,
@@ -79,6 +85,10 @@ def search_cnpj(
         )
 
         process_html = crawler.search_process_cnpj_page(cnpj, page)
+
+        if not process_html:
+            break
+
         process_numbers = process_list(process_html)
 
         if not process_numbers:
@@ -86,7 +96,9 @@ def search_cnpj(
             break
 
         logging.info(
-            "Foram encontrados %s processos na página %s.", len(process_numbers), page
+            "Foram encontrados %s processos na página %s.",
+            len(process_numbers),
+            page,
         )
 
         for process_number in process_numbers:
@@ -98,6 +110,9 @@ def search_cnpj(
             process_html = crawler.search_process_number(
                 process_number,
             )
+
+            if not process_html:
+                continue
 
             process_data = process_identification(
                 process_html,
@@ -126,17 +141,74 @@ def search_cnpj(
                 len(process_data["movimentacoes"]),
             )
 
-        logging.info("Busca por CNPJ finalizada.")
+    logging.info("Busca por CNPJ finalizada.")
+
+
+def search_party_name(
+    crawler: ProcessCrawler, party_name: str, processed_numbers: set[str]
+) -> None:
+
+    logging.info(
+        "Buscando processo por nome da parte: %s",
+        party_name,
+    )
+
+    process_html = crawler.search_process_party_name(party_name)
+
+    if not process_html:
+        return
+
+    process_numbers = process_list(process_html)
+
+    logging.info(
+        "Foram encontrados %s processos.",
+        len(process_numbers),
+    )
+
+    for process_number in process_numbers:
+        logging.info("Busca detalhes do processo: %s", process_number)
+
+        process_html = crawler.search_process_number(
+            process_number,
+        )
+        if not process_html:
+            continue
+
+        process_data = process_identification(process_html)
+
+        if process_data["numero_processo"] in processed_numbers:
+            logging.info(
+                "Processo %s já processado. Ignorando",
+                process_data["numero_processo"],
+            )
+            continue
+
+        processed_numbers.add(process_data["numero_processo"])
+        process_data["origem_busca"] = "nome_parte"
+        process_data["termo_busca"] = party_name
+
+        save_jsonl(process_data)
+
+        logging.info(
+            "Parte do processo %s salvo com %s partes envolvidas e %s movimentações.",
+            process_data["numero_processo"],
+            len(process_data["envolvidos"]),
+            len(process_data["movimentacoes"]),
+        )
+
+    logging.info("Busca por nome da parte finalizada.")
 
 
 def main() -> None:
-    clear_jsonl()
-
-    logging.info("Arquivo de saída limpo.")
-
     crawler = ProcessCrawler()
 
+    if not crawler.is_available():
+        return
+
     processed_numbers = set()
+
+    clear_jsonl()
+    logging.info("Arquivo de saída limpo.")
 
     search_number(
         crawler,
@@ -147,6 +219,12 @@ def main() -> None:
     search_cnpj(
         crawler,
         PROCESS_CNPJ,
+        processed_numbers,
+    )
+
+    search_party_name(
+        crawler,
+        PARTY_NAME,
         processed_numbers,
     )
 

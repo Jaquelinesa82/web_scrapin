@@ -1,5 +1,6 @@
 import requests
 import time
+import logging
 from parser import only_digits
 
 BASE_URL = "https://www5.trf5.jus.br/cp/"
@@ -9,6 +10,7 @@ SEARCH_URL = "https://cp.trf5.jus.br/cp/cp.do"
 
 PROCESS_SEARCH_TYPE = "xmlproc"
 CNPJ_SEARCH_TYPE = "xmlcpf"
+PARTY_NAME_SEARCH_TYPE = "xmlnomparte"
 
 
 class ProcessCrawler:
@@ -22,6 +24,15 @@ class ProcessCrawler:
                 "Origin": "https://www5.trf5.jus.br",
             }
         )
+
+    def is_available(self) -> bool:
+        try:
+            response = self.session.get(BASE_URL, timeout=10)
+            response.raise_for_status()
+            return True
+        except requests.exceptions.RequestException:
+            logging.warning("Portal TRF5 indisponível no momento.")
+            return False
 
     def search_process(self, search_type: str, value: str) -> str:
         data = {
@@ -52,17 +63,25 @@ class ProcessCrawler:
         if search_type == CNPJ_SEARCH_TYPE:
             data["filtroCPF2"] = value
 
-        response = self.session.post(
-            SEARCH_URL,
-            data=data,
-            timeout=30,
-        )
+        if search_type == PARTY_NAME_SEARCH_TYPE:
+            data["filtro"] = value
+            data["exata"] = "on"
 
-        response.raise_for_status()
+        try:
+            response = self.session.post(
+                SEARCH_URL,
+                data=data,
+                timeout=30,
+            )
+            response.raise_for_status()
+            time.sleep(self.delay)
 
-        time.sleep(self.delay)
+            return response.text
 
-        return response.text
+        except requests.exceptions.RequestException:
+            logging.warning("Falha na conexão com o portal TRF5.")
+
+            return ""
 
     def search_process_number(self, process_number: str) -> str:
         return self.search_process(PROCESS_SEARCH_TYPE, process_number)
@@ -70,18 +89,26 @@ class ProcessCrawler:
     def search_process_cnpj(self, cnpj: str) -> str:
         return self.search_process(CNPJ_SEARCH_TYPE, cnpj)
 
+    def search_process_party_name(self, party_name: str) -> str:
+        return self.search_process(PARTY_NAME_SEARCH_TYPE, party_name)
+
     def search_process_cnpj_page(self, cnpj: str, page: int) -> str:
         cnpj_digits = only_digits(cnpj)
 
         url = f"{CP_BASE_URL}/processo/cpf/porData/ativos/" f"{cnpj_digits}/{page}"
 
-        response = self.session.get(
-            url,
-            timeout=30,
-        )
+        try:
+            response = self.session.get(
+                url,
+                timeout=30,
+            )
 
-        response.raise_for_status()
+            response.raise_for_status()
+            time.sleep(self.delay)
 
-        time.sleep(self.delay)
+            return response.text
 
-        return response.text
+        except requests.exceptions.RequestException:
+            logging.warning("Falha na conexão com a página de resultados do CNPJ.")
+
+            return ""

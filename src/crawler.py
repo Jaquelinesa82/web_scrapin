@@ -17,12 +17,12 @@ class ProcessCrawler:
             }
         )
 
-    def search_process(self, process_number: str) -> str:
+    def search_process(self, search_type: str, value: str) -> str:
         data = {
             "navigation": "Netscape",
             "filtroCpfRequest": "",
-            "tipo": "xmlproc",
-            "filtro": process_number,
+            "tipo": search_type,
+            "filtro": "",
             "filtroCPF2": "",
             "tipoproc": "T",
             "filtroRPV_Precatorios": "",
@@ -40,6 +40,12 @@ class ProcessCrawler:
             "ordenacao cpf": "D",
         }
 
+        if search_type == "xmlproc":
+            data["filtro"] = value
+
+        if search_type == "xmlcpf":
+            data["filtroCPF2"] = value
+
         response = self.session.post(
             SEARCH_URL,
             data=data,
@@ -51,3 +57,9 @@ class ProcessCrawler:
         time.sleep(self.delay)
 
         return response.text
+
+    def search_process_number(self, process_number: str) -> str:
+        return self.search_process("xmlproc", process_number)
+
+    def search_process_cnpj(self, cnpj: str) -> str:
+        return self.search_process("xmlcpf", cnpj)

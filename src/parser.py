@@ -119,3 +119,27 @@ def parse_movements(soup: BeautifulSoup) -> list[dict]:
         )
 
     return movimentacoes
+
+
+def process_list(html: str) -> list[str]:
+    soup = BeautifulSoup(html, "html.parser")
+
+    process_numbers = []
+
+    links = soup.find_all(
+        "a",
+        class_="linkar",
+    )
+
+    for link in links:
+        href = link.get("href", "")
+
+        if "/processo/" not in href:
+            continue
+
+        process_number = link.get_text(strip=True)
+
+        if process_number and process_number not in process_numbers:
+            process_numbers.append(process_number)
+
+    return process_numbers

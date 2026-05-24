@@ -6,6 +6,8 @@ def only_digits(value: str) -> str:
     return re.sub(r"\D", "", value)
 
 
+# Normaliza espaços e quebras de linha
+# retornadas pelo HTML do portal.
 def clean_text(value: str | None) -> str:
     if not value:
         return ""
@@ -13,7 +15,7 @@ def clean_text(value: str | None) -> str:
     return " ".join(value.split())
 
 
-def process_identification(html: str) -> str:
+def process_identification(html: str) -> dict:
     soup = BeautifulSoup(html, "lxml")
     page_text = clean_text(soup.get_text(" "))
 
@@ -51,7 +53,7 @@ def process_identification(html: str) -> str:
     }
 
 
-def involved_parties(soup=BeautifulSoup) -> list[dict]:
+def involved_parties(soup: BeautifulSoup) -> list[dict]:
     envolvidos = []
 
     for table in soup.find_all("table"):

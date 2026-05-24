@@ -45,6 +45,8 @@ def search_number(
             process_html,
         )
 
+        # Evita persistir processos repetidos encontrados
+        # em diferentes tipos de busca.
         if process_data["numero_processo"] in processed_numbers:
             logging.info(
                 "Processo %s já processado. Ignorando.",
@@ -76,7 +78,8 @@ def search_cnpj(
     cnpj: str,
     processed_numbers: set[str],
 ) -> None:
-
+    # A busca por CNPJ retorna múltiplas páginas.
+    # Define o número máximo de páginas processadas
     for page in range(MAX_CNPJ_PAGES):
         logging.info(
             "Buscando processos por CNPJ: %s na página %s",
@@ -118,6 +121,8 @@ def search_cnpj(
                 process_html,
             )
 
+            # Evita persistir processos repetidos encontrados
+            # em diferentes tipos de busca.
             if process_data["numero_processo"] in processed_numbers:
                 logging.info(
                     "Processo %s já processado. Ignorando.",
@@ -176,6 +181,8 @@ def search_party_name(
 
         process_data = process_identification(process_html)
 
+        # Evita persistir processos repetidos encontrados
+        # em diferentes tipos de busca.
         if process_data["numero_processo"] in processed_numbers:
             logging.info(
                 "Processo %s já processado. Ignorando",

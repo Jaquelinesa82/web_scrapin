@@ -2,6 +2,14 @@ from bs4 import BeautifulSoup
 import re
 
 
+def normalize_party_name(value: str) -> str:
+    return re.sub(
+        r"[^a-zA-Z0-9\s]",
+        "",
+        value,
+    )
+
+
 def only_digits(value: str) -> str:
     return re.sub(r"\D", "", value)
 

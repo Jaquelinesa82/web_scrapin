@@ -5,31 +5,48 @@ Crawler desenvolvido para consulta processual no portal do TRF5.
 O projeto permite buscar processos por:
 
 - Número do processo;
-- CNPJ/CPF;
+- CPF/CNPJ;
 - Nome da parte.
 
-Os dados extraídos são persistidos em arquivo JSON Lines (`.jsonl`).
+A execução é feita de forma interativa pelo terminal, permitindo escolher o tipo de busca e informar o termo desejado.
 
 ---
 
 # Tecnologias utilizadas
 
-- Python 3.11.9
+- Python 3
 - requests
 - BeautifulSoup4
+- lxml
 
+---
+## Requisitos
+
+- Python 3.11.9
+- pip
+
+---
+
+# Qualidade de código
+
+O projeto utiliza ferramentas de qualidade e formatação:
+
+```bash
+flake8
+black 
+```
 ---
 
 # Estrutura do projeto
 
 ```text
-
 src/
 ├── crawler.py
 ├── parser.py
 ├── storage.py
-└── main.py
-
+├── main.py
+└── services/
+    └── search.py
 ```
 
 ---
@@ -48,28 +65,44 @@ Responsável pela extração, tratamento e normalização dos dados HTML utiliza
 
 Responsável pela persistência dos dados em arquivo JSON Lines.
 
+## services/search.py
+
+Responsável pelos fluxos de busca, processamento dos processos encontrados, deduplicação e persistência.
+
 ## main.py
 
-Responsável pela orquestração do fluxo de execução das buscas.
+Responsável pela interface interativa no terminal e pela orquestração da execução.
 
 ---
 
 # Funcionalidades implementadas
 
 - Busca por número do processo;
-- Busca por CNPJ/CPF;
+- Busca por CNPJ;
 - Busca por nome da parte;
 - Paginação na busca por CNPJ;
 - Persistência em JSON Lines;
 - Controle de duplicidade de processos;
 - Tratamento de falha de conexão;
 - Validação de disponibilidade do portal;
-- Logs de execução;
+- Execução interativa via terminal;
 - Separação de responsabilidades por módulo.
 
 ---
 
-# Como executar
+# Como executar o projeto
+
+## 1. Clonar o repositório
+
+```bash
+git clone https://github.com/Jaquelinesa82/web_scrapin
+```
+
+## 2. Acessar diretório do projeto
+
+```bash
+cd web_scrapin
+```
 
 ## Criar ambiente virtual
 
@@ -82,13 +115,13 @@ python -m venv .venv
 ### Linux/macOS
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### Windows
 
 ```bash
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 ## Instalar dependências
@@ -97,7 +130,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Executar projeto
+## Executar o projeto
 
 ```bash
 python src/main.py
@@ -122,6 +155,8 @@ Cada linha contém um JSON com:
 - envolvidos;
 - movimentações;
 
+Os arquivos extraídos em `data/` estão configurados no `.gitignore`.
+
 ---
 
 # Decisões de implementação
@@ -130,27 +165,17 @@ O projeto foi estruturado buscando simplicidade, legibilidade e separação de r
 
 As responsabilidades foram divididas em módulos independentes:
 
-- crawler → requisições HTTP;
-- parser → extração e tratamento de dados;
-- storage → persistência;
-- main → orquestração do fluxo.
+- `crawler.py` → requisições HTTP e disponibilidade do portal;
+- `parser.py` → extração e normalização dos dados;
+- `storage.py` → persistência em JSON Lines;
+- `services/search.py` → fluxos de busca, deduplicação e persistência;
+- `main.py` → interface interativa e orquestração.
 
 A busca por CNPJ implementa paginação para descoberta de múltiplos processos.
 
 Foi implementado controle de duplicidade para evitar persistência repetida de processos encontrados em diferentes tipos de busca.
 
 O crawler também realiza validação de disponibilidade do portal antes da execução, evitando limpar arquivos anteriores em caso de indisponibilidade do sistema.
-
----
-
-# Tratamento de erros
-
-O projeto possui tratamento para:
-
-- falha de conexão;
-- timeout;
-- respostas vazias;
-- interrupção controlada do fluxo.
 
 ---
 

@@ -96,14 +96,8 @@ Responsável pela interface interativa no terminal e pela orquestração da exec
 
 ```bash
 git clone https://github.com/Jaquelinesa82/web_scrapin
+
 ```
-
-## 2. Acessar diretório do projeto
-
-```bash
-cd web_scrapin
-```
-
 ## Criar ambiente virtual
 
 ```bash

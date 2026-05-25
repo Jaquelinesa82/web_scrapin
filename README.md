@@ -33,9 +33,9 @@ O projeto utiliza ferramentas de qualidade e formatação:
 
 ```bash
 flake8
-black 
+black
+
 ```
----
 
 # Estrutura do projeto
 
@@ -96,8 +96,14 @@ Responsável pela interface interativa no terminal e pela orquestração da exec
 
 ```bash
 git clone https://github.com/Jaquelinesa82/web_scrapin
-
 ```
+
+## 2. Acessar diretório do projeto
+
+```bash
+cd web_scrapin
+```
+
 ## Criar ambiente virtual
 
 ```bash

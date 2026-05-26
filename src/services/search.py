@@ -30,6 +30,13 @@ def process_and_save(
         process_html,
     )
 
+    if not process_data["numero_processo"]:
+        logging.info(
+            "O processo %s é inexistente ou tramita em segredo de justiça.",
+            process_number,
+        )
+        return
+
     if process_data["numero_processo"] in processed_numbers:
         logging.info(
             "Processo %s já processado. Ignorando.",

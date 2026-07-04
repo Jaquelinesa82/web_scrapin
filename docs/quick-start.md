@@ -52,3 +52,4 @@ O sistema fará a consulta, processará os detalhes do processo e salvará o res
 - [Parser](parser.md)
 - [Services](services.md)
 - [Storage](storage.md)
+- [Regras de Negócio](business-rules.md)

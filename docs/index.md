@@ -19,6 +19,7 @@ Projeto para consulta processual no portal do TRF5. Permite buscar processos por
 2. Siga o guia rápido: [Quick Start](quick-start.md)
 3. Leia a arquitetura do sistema: [Arquitetura](architecture.md)
 4. Consulte a documentação dos módulos: [Crawler](crawler.md), [Parser](parser.md), [Services](services.md), [Storage](storage.md)
+5. Veja as regras de negócio: [Regras de Negócio](business-rules.md)
 
 ## Exemplos rápidos
 

@@ -138,6 +138,32 @@ python src/main.py
 
 ---
 
+# Documentação
+
+A documentação do projeto está disponível no MkDocs.
+
+Para instalar as dependências de documentação:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Para rodar a documentação localmente:
+
+```bash
+mkdocs serve
+```
+
+Para gerar o site estático:
+
+```bash
+mkdocs build
+```
+
+Os arquivos de documentação estão em `docs/`.
+
+---
+
 # Estrutura dos dados persistidos
 
 Os dados são persistidos em:

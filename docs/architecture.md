@@ -25,7 +25,7 @@ O sistema foi dividido em camadas para separar responsabilidades e facilitar man
 
 ## Separação de responsabilidades
 
-- O `crawler` concentra as requisições e isolam o restante da aplicação de mudanças no portal.
+- O `crawler` concentra as requisições e isola o restante da aplicação de mudanças no portal.
 - O `parser` transforma HTML em dados estruturados.
 - O `services` orquestra buscas e evita duplicação de resultados.
 - O `storage` garante persistência simples e reutilizável.

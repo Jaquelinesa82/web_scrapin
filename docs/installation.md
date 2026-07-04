@@ -10,7 +10,6 @@ Siga os passos abaixo para preparar o ambiente e executar o projeto localmente.
 
 - Python 3.11+
 - pip
-- Git (opcional)
 
 ## Passos
 

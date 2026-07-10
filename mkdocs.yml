@@ -1,0 +1,30 @@
+site_name: Web Scraping Documentation
+site_description: Documentação técnica do crawler
+site_author: Jaqueline Sá Santos
+
+theme:
+  name: material
+  language: pt-BR
+
+plugins:
+  - search
+  - mkdocstrings
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+nav:
+  - Início: index.md
+  - Início Rápido: quick-start.md
+  - Arquitetura: architecture.md
+  - Instalação: installation.md
+  - Crawler: crawler.md
+  - Parser: parser.md
+  - Services: services.md
+  - Storage: storage.md
+  - Regras de Negócio: business-rules.md

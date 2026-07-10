@@ -1,8 +1,8 @@
 ---
-title: Quick Start
+title: Início Rápido
 ---
 
-# Quick Start
+# Início Rápido
 
 Esta página apresenta um exemplo rápido de uso do projeto após a instalação.
 

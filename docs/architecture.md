@@ -23,6 +23,10 @@ O sistema foi dividido em camadas para separar responsabilidades e facilitar man
 5. `parser.py` processa o HTML e gera estrutura de dados normalizada.
 6. `storage.py` salva cada processo em `data/processos.jsonl`.
 
+### Diagrama do fluxo principal
+
+![Fluxo principal do crawler](images/architecture-flow.svg)
+
 ## Separação de responsabilidades
 
 - O `crawler` concentra as requisições e isola o restante da aplicação de mudanças no portal.
